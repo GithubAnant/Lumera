@@ -1,66 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Try A New Song</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      body {
-        font-family: "Montserrat", sans-serif;
-        height: 100vh;
-        overflow: hidden;
-        background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiB2aWV3Qm94PSIwIDAgMTkyMCAxMDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZGVmcz4KPHN0eWxlPgoucGluay1za3kgeyBmaWxsOiB1cmwoI3BpbmtTa3kpOyB9Ci5tb3VudGFpbnMgeyBmaWxsOiB1cmwoI21vdW50YWluR3JhZGllbnQpOyB9Cjwvc3R5bGU+CjxsaW5lYXJHcmFkaWVudCBpZD0icGlua1NreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiIGdyYWRpZW50VW5pdHM9Im9iamVjdEJvdW5kaW5nQm94Ij4KPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NDNhNyIvPgo8c3RvcCBvZmZzZXQ9IjQwJSIgc3RvcC1jb2xvcj0iIzc5NzFhNyIvPgo8c3RvcCBvZmZzZXQ9IjgwJSIgc3RvcC1jb2xvcj0iI2MzOTY5ZSIvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZmIzYjMiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJtb3VudGFpbkdyYWRpZW50IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSIgZ3JhZGllbnRVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNmE0YzRkIi8+CjxzdG9wIG9mZnNldD0iMzAlIiBzdG9wLWNvbG9yPSIjNGEzMjM0Ii8+CjxzdG9wIG9mZnNldD0iNzAlIiBzdG9wLWNvbG9yPSIjMzIyMjI1Ii8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFhMTExNSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+CjxyZWN0IHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiIGNsYXNzPSJwaW5rLXNreSIvPgo8cGF0aCBkPSJNMCAxMDgwTDEwMCA5MDBMMjAwIDk1MEwzMDAgODUwTDQwMCA5MDBMNTQ0IDc1MEw2MjAgOTIwTDcwMCA4MDBMODAwIDkzMEw5MDAgODIwTDEwMDAgOTAwTDExMjAgNzgwTDEyMDAgODkwTDEzMDAgODMwTDEzODAgNzAwTDE0NjAgODQwTDE1MjAgNzIwTDE2MjAgODUwTDE3MjAgODEwTDE4MjAgODkwTDE5MjAgMTA4MEgwWiIgY2xhc3M9Im1vdW50YWlucyIvPgo8L3N2Zz4K");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        position: relative;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumera: Find a song based on your mood</title>
+  <link rel="icon" type="image/png" href="lumera.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      /* Realistic mountain background */
-      .mountain-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          to bottom,
+    body {
+      font-family: "Montserrat", sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiB2aWV3Qm94PSIwIDAgMTkyMCAxMDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZGVmcz4KPHN0eWxlPgoucGluay1za3kgeyBmaWxsOiB1cmwoI3BpbmtTa3kpOyB9Ci5tb3VudGFpbnMgeyBmaWxsOiB1cmwoI21vdW50YWluR3JhZGllbnQpOyB9Cjwvc3R5bGU+CjxsaW5lYXJHcmFkaWVudCBpZD0icGlua1NreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiIGdyYWRpZW50VW5pdHM9Im9iamVjdEJvdW5kaW5nQm94Ij4KPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NDNhNyIvPgo8c3RvcCBvZmZzZXQ9IjQwJSIgc3RvcC1jb2xvcj0iIzc5NzFhNyIvPgo8c3RvcCBvZmZzZXQ9IjgwJSIgc3RvcC1jb2xvcj0iI2MzOTY5ZSIvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZmIzYjMiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJtb3VudGFpbkdyYWRpZW50IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSIgZ3JhZGllbnRVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giPgo8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNmE0YzRkIi8+CjxzdG9wIG9mZnNldD0iMzAlIiBzdG9wLWNvbG9yPSIjNGEzMjM0Ii8+CjxzdG9wIG9mZnNldD0iNzAlIiBzdG9wLWNvbG9yPSIjMzIyMjI1Ii8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFhMTExNSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+CjxyZWN0IHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiIGNsYXNzPSJwaW5rLXNreSIvPgo8cGF0aCBkPSJNMCAxMDgwTDEwMCA5MDBMMjAwIDk1MEwzMDAgODUwTDQwMCA5MDBMNTQ0IDc1MEw2MjAgOTIwTDcwMCA4MDBMODAwIDkzMEw5MDAgODIwTDEwMDAgOTAwTDExMjAgNzgwTDEyMDAgODkwTDEzMDAgODMwTDEzODAgNzAwTDE0NjAgODQwTDE1MjAgNzIwTDE2MjAgODUwTDE3MjAgODEwTDE4MjAgODkwTDE5MjAgMTA4MEgwWiIgY2xhc3M9Im1vdW50YWlucyIvPgo8L3N2Zz4K");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      position: relative;
+    }
+
+    /* Realistic mountain background */
+    .mountain-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom,
           #594397 0%,
           #7971a7 20%,
           #a584a0 40%,
           #c3969e 60%,
           #dfb2a8 80%,
-          #ffb3b3 100%
-        );
-        z-index: 1;
-      }
+          #ffb3b3 100%);
+      z-index: 1;
+    }
 
-      .mountain-silhouette {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 40%;
-        background: linear-gradient(
-          to bottom,
+    .mountain-silhouette {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(to bottom,
           rgba(42, 35, 45, 0.9) 0%,
           rgba(32, 25, 35, 0.95) 30%,
           rgba(22, 15, 25, 1) 60%,
-          rgba(12, 8, 15, 1) 100%
-        );
-        clip-path: polygon(
-          0% 100%,
+          rgba(12, 8, 15, 1) 100%);
+      clip-path: polygon(0% 100%,
           3% 85%,
           8% 75%,
           12% 65%,
@@ -78,26 +72,22 @@
           92% 45%,
           97% 55%,
           100% 65%,
-          100% 100%
-        );
-        z-index: 2;
-      }
+          100% 100%);
+      z-index: 2;
+    }
 
-      .mountain-layer-2 {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 35%;
-        background: linear-gradient(
-          to bottom,
+    .mountain-layer-2 {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 35%;
+      background: linear-gradient(to bottom,
           rgba(52, 45, 55, 0.8) 0%,
           rgba(42, 35, 45, 0.9) 40%,
           rgba(32, 25, 35, 1) 70%,
-          rgba(22, 15, 25, 1) 100%
-        );
-        clip-path: polygon(
-          0% 100%,
+          rgba(22, 15, 25, 1) 100%);
+      clip-path: polygon(0% 100%,
           5% 90%,
           12% 80%,
           20% 70%,
@@ -113,25 +103,21 @@
           90% 50%,
           95% 60%,
           100% 70%,
-          100% 100%
-        );
-        z-index: 3;
-      }
+          100% 100%);
+      z-index: 3;
+    }
 
-      .mountain-layer-3 {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 25%;
-        background: linear-gradient(
-          to bottom,
+    .mountain-layer-3 {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 25%;
+      background: linear-gradient(to bottom,
           rgba(62, 55, 65, 0.7) 0%,
           rgba(52, 45, 55, 0.85) 50%,
-          rgba(42, 35, 45, 1) 100%
-        );
-        clip-path: polygon(
-          0% 100%,
+          rgba(42, 35, 45, 1) 100%);
+      clip-path: polygon(0% 100%,
           8% 85%,
           15% 75%,
           25% 65%,
@@ -143,213 +129,424 @@
           85% 65%,
           95% 75%,
           100% 85%,
-          100% 100%
-        );
-        z-index: 4;
-      }
+          100% 100%);
+      z-index: 4;
+    }
 
-      .content-container {
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        color: white;
-        z-index: 10;
-        width: 90%;
-        max-width: 1000px;
-      }
+    .content-container {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 10;
+      width: 90%;
+      max-width: 1000px;
+    }
 
+    .fade-text {
+      font-size: 5rem;
+      font-weight: 700;
+      font-family: "Montserrat", sans-serif;
+      letter-spacing: 2px;
+      margin: 0;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .fade-text.visible {
+      opacity: 1;
+    }
+
+    .dual-text-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .dual-text-container {
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .dual-text-container.visible {
+      opacity: 1;
+    }
+
+    .dual-text {
+      font-size: 4rem;
+      font-weight: 700;
+      font-family: "Montserrat", sans-serif;
+      letter-spacing: 2px;
+      margin: 20px 0;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .dual-text.visible {
+      opacity: 1;
+    }
+
+    .search-container {
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .search-container.visible {
+      opacity: 1;
+    }
+
+    .search-helper-text {
+      font-family: 'Montserrat', sans-serif;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 18px;
+      text-align: center;
+      width: 70%;
+      min-width: 300px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .glass-search-bar {
+      width: 70%;
+      min-width: 300px;
+      padding: 20px 25px;
+      font-size: 1.2rem;
+      font-family: "Montserrat", sans-serif;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 25px;
+      color: white;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .glass-search-bar::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 300;
+    }
+
+    .glass-search-bar:focus {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 20px rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
       .fade-text {
-        font-size: 4rem;
-        font-weight: 700;
-        font-family: "Montserrat", sans-serif;
-        letter-spacing: 2px;
-        margin: 0;
-        opacity: 0;
-        transition: opacity 1.2s ease-in-out;
-      }
-
-      .fade-text.visible {
-        opacity: 1;
-      }
-
-      .dual-text-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-      }
-
-      .dual-text-container {
-        opacity: 0;
-        transition: opacity 1.2s ease-in-out;
-      }
-
-      .dual-text-container.visible {
-        opacity: 1;
+        font-size: 2.5rem;
       }
 
       .dual-text {
-        font-size: 4rem;
-        font-weight: 700;
-        font-family: "Montserrat", sans-serif;
-        letter-spacing: 2px;
-        margin: 20px 0;
-        opacity: 0;
-        transition: opacity 1.2s ease-in-out;
-      }
-
-      .dual-text.visible {
-        opacity: 1;
-      }
-
-      .search-container {
-        opacity: 0;
-        transition: opacity 1.2s ease-in-out;
-        margin-top: 40px;
-      }
-
-      .search-container.visible {
-        opacity: 1;
+        font-size: 2.5rem;
       }
 
       .glass-search-bar {
+        font-size: 1rem;
+        padding: 15px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .fade-text {
+        font-size: 2rem;
+      }
+
+      .dual-text {
+        font-size: 1.4rem;
+        margin: 15px 0;
+      }
+    }
+
+    /* .dropdown-and-submit {
+        display: flex;
+        flex-direction: row;
+        align-items: lef;
+        margin-top: 18px;
+        gap: 18px;
         width: 70%;
         min-width: 300px;
-        padding: 20px 25px;
-        font-size: 1.2rem;
-        font-family: "Montserrat", sans-serif;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 25px;
-        color: white;
-        outline: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: flex-start;
+      } */
+
+    .dropdown-and-submit {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      max-width: 1000px;
+      /* match your search bar max-width */
+      margin: 18px auto 0 auto;
+      /* top auto bottom */
+      justify-content: center;
+      /* aligns with search bar */
+    }
+
+
+    .glass-dropdown {
+      font-family: 'Montserrat', sans-serif;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 18px;
+      color: white;
+      outline: none;
+      font-size: 1.1rem;
+      padding: 12px 24px 12px 16px;
+      margin-right: 2;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      appearance: none;
+      -webkit-appearance: none;
+      min-width: 70px;
+      transition: all 0.3s ease;
+      margin-left: 0;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 5px center;
+      background-size: 18px 18px;
+    }
+
+    .glass-dropdown:focus {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .glass-dropdown option {
+      color: #222;
+      background: #fff;
+    }
+
+    .submit-btn {
+      font-family: 'Montserrat', sans-serif;
+      background: #fff;
+      color: #111;
+      border: none;
+      border-radius: 18px;
+      padding: 12px 36px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: none;
+      outline: none;
+    }
+
+    .submit-btn:hover {
+      background: #f2f2f2;
+      color: #000;
+    }
+
+    @media (max-width: 768px) {
+      .search-helper-text {
+        font-size: 0.95rem;
       }
 
-      .glass-search-bar::placeholder {
-        color: rgba(255, 255, 255, 0.7);
-        font-weight: 300;
+      .glass-dropdown {
+        font-size: 0.95rem;
+        padding: 10px 16px 10px 10px;
+        min-width: 50px;
       }
 
-      .glass-search-bar:focus {
-        background: rgba(255, 255, 255, 0.25);
-        border-color: rgba(255, 255, 255, 0.4);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3),
-          0 0 20px rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
+      .submit-btn {
+        font-size: 0.95rem;
+        padding: 10px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search-helper-text {
+        font-size: 0.8rem;
       }
 
-      @media (max-width: 768px) {
-        .fade-text {
-          font-size: 2.5rem;
-        }
-
-        .dual-text {
-          font-size: 2.5rem;
-        }
-
-        .glass-search-bar {
-          font-size: 1rem;
-          padding: 15px 20px;
-        }
+      .glass-dropdown {
+        font-size: 0.8rem;
+        padding: 8px 10px 8px 8px;
       }
 
-      @media (max-width: 480px) {
-        .fade-text {
-          font-size: 2rem;
-        }
-
-        .dual-text {
-          font-size: 1.4rem;
-          margin: 15px 0;
-        }
+      .submit-btn {
+        font-size: 0.8rem;
+        padding: 8px 12px;
       }
-    </style>
-  </head>
-  <body>
-    <div class="mountain-background"></div>
-    <div class="mountain-silhouette"></div>
-    <div class="mountain-layer-2"></div>
-    <div class="mountain-layer-3"></div>
+    }
+  </style>
+  <style>
+    .lumera-header {
+      position: fixed;
+      top: 30px;
+      left: 40px;
+      display: flex;
+      align-items: center;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+      font-family: 'Montserrat', sans-serif;
+    }
 
-    <div class="content-container">
-      <!-- First text that fades in and out -->
-      <h1 id="firstText" class="fade-text">TRY A NEW SONG</h1>
+    .lumera-header.visible {
+      opacity: 0.8;
+    }
 
-      <!-- Second phase with dual text -->
-      <div id="dualTextContainer" class="dual-text-container">
-        <h2 id="firstDualText" class="dual-text">PICK A SONG YOU LIKE</h2>
-        <h2 id="secondDualText" class="dual-text">PICK A MOOD YOU WANT</h2>
-      </div>
+    .lumera-logo {
+      height: 32px;
+      width: 32px;
+      margin-right: 6px;
+      object-fit: contain;
+      display: block;
+    }
 
-      <!-- Search bar -->
-      <div id="searchContainer" class="search-container">
-        <input
-          type="text"
-          class="glass-search-bar"
-          placeholder="Search for songs, artists, or moods..."
-        />
-      </div>
+    .lumera-title {
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: white;
+      letter-spacing: 1px;
+      font-family: 'Montserrat', sans-serif;
+      text-shadow: none;
+      text-transform: lowercase;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .lumera-header {
+        top: 12px;
+        left: 16px;
+      }
+
+      .lumera-title {
+        font-size: 1rem;
+      }
+
+      .lumera-logo {
+        height: 20px;
+        width: 20px;
+        margin-right: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="lumera-header" id="lumeraHeader">
+    <img src="lumera.png" alt="Lumera Logo" class="lumera-logo" />
+    <span class="lumera-title">Lumera</span>
+  </div>
+  <div class="mountain-background"></div>
+  <div class="mountain-silhouette"></div>
+  <div class="mountain-layer-2"></div>
+  <div class="mountain-layer-3"></div>
+
+  <div class="content-container">
+    <!-- First text that fades in and out -->
+    <h1 id="firstText" class="fade-text">LUMERA</h1>
+
+    <!-- Second phase with dual text -->
+    <div id="dualTextContainer" class="dual-text-container">
+      <h2 id="firstDualText" class="dual-text">PICK A SONG YOU LIKE</h2>
+      <h2 id="secondDualText" class="dual-text">PICK A MOOD YOU WANT</h2>
     </div>
 
-    <script>
-      // Animation sequence
-      function startAnimationSequence() {
-        const firstText = document.getElementById("firstText");
-        const dualTextContainer = document.getElementById("dualTextContainer");
-        const firstDualText = document.getElementById("firstDualText");
-        const secondDualText = document.getElementById("secondDualText");
-        const searchContainer = document.getElementById("searchContainer");
+    <!-- Search bar -->
+    <div id="searchContainer" class="search-container">
+      <div class="search-helper-text">Find the tune. Flip the mood.</div>
+      <input type="text" class="glass-search-bar" placeholder="Search for songs, artists, or moods..." />
+      <div class="dropdown-and-submit">
+        <select class="glass-dropdown">
+          <option disabled selected>Select a mood</option>
+          <option value="calm">Calm</option>
+          <option value="moody">Moody</option>
+          <option value="uplifting">Uplifting</option>
+          <option value="melancholy">Melancholy</option>
+          <option value="romantic">Romantic</option>
+          <option value="dark">Dark</option>
+          <option value="euphoric">Euphoric</option>
+          <option value="nostalgic">Nostalgic</option>
+          <option value="angsty">Angsty</option>
+          <option value="hopeful">Hopeful</option>
+        </select>
 
-        // 🔥 TIMING CONTROLS - Adjust these values to change animation speed
-        // Phase 1: Show "TRY A NEW SONG"
-        setTimeout(() => {
-          firstText.classList.add("visible");
-        }, 500); // 🔥 First text appears after 0.5s
+        <button class="submit-btn">submit</button>
+      </div>
+    </div>
+  </div>
 
-        // Phase 2: Hide first text and show dual text container
-        setTimeout(() => {
-          firstText.classList.remove("visible");
-        }, 3000); // 🔥 First text disappears at 3.5s
+  <script>
+    // Animation sequence
+    function startAnimationSequence() {
+      const firstText = document.getElementById("firstText");
+      const dualTextContainer = document.getElementById("dualTextContainer");
+      const firstDualText = document.getElementById("firstDualText");
+      const secondDualText = document.getElementById("secondDualText");
+      const searchContainer = document.getElementById("searchContainer");
+      const lumeraHeader = document.getElementById("lumeraHeader");
 
-        setTimeout(() => {
-          dualTextContainer.classList.add("visible");
-          firstDualText.classList.add("visible");
-        }, 4000); // 🔥 "PICK A SONG YOU LIKE" appears at 4.5s
+      // 🔥 TIMING CONTROLS - Adjust these values to change animation speed
+      // Phase 1: Show "TRY A NEW SONG"
+      setTimeout(() => {
+        firstText.classList.add("visible");
+      }, 500); // 🔥 First text appears after 0.5s
 
-        // Phase 3: Show second dual text below the first
-        setTimeout(() => {
-          secondDualText.classList.add("visible");
-        }, 6500); // 🔥 "PICK A MOOD YOU WANT" appears at 7s
+      // Phase 2: Hide first text and show dual text container
+      setTimeout(() => {
+        firstText.classList.remove("visible");
+      }, 3000); // 🔥 First text disappears at 3.5s
 
-        // Phase 4: Hide both dual texts together and show search bar
-        setTimeout(() => {
-          firstDualText.classList.remove("visible");
-          secondDualText.classList.remove("visible");
-          dualTextContainer.classList.remove("visible");
-        }, 8500); // 🔥 Both dual texts disappear at 10s
+      setTimeout(() => {
+        dualTextContainer.classList.add("visible");
+        firstDualText.classList.add("visible");
+      }, 4000); // 🔥 "PICK A SONG YOU LIKE" appears at 4.5s
 
-        setTimeout(() => {
-          searchContainer.classList.add("visible");
-        }, 10000); // 🔥 Search bar appears at 11.2s
-      }
+      // Phase 3: Show second dual text below the first
+      setTimeout(() => {
+        secondDualText.classList.add("visible");
+      }, 6500); // 🔥 "PICK A MOOD YOU WANT" appears at 7s
 
-      // Start the animation when page loads
-      window.addEventListener("load", startAnimationSequence);
+      // Phase 4: Hide both dual texts together and show search bar
+      setTimeout(() => {
+        firstDualText.classList.remove("visible");
+        secondDualText.classList.remove("visible");
+        dualTextContainer.classList.remove("visible");
+      }, 8500); // 🔥 Both dual texts disappear at 10s
 
-      // Add some interactivity to the search bar
-      const searchBar = document.querySelector(".glass-search-bar");
-      searchBar.addEventListener("input", function (e) {
-        // You can add search functionality here
-        console.log("Searching for:", e.target.value);
-      });
-    </script>
-  </body>
+      setTimeout(() => {
+        searchContainer.classList.add("visible");
+        lumeraHeader.classList.add("visible");
+      }, 10000); // 🔥 Search bar appears at 11.2s
+    }
+
+    // Start the animation when page loads
+    window.addEventListener("load", startAnimationSequence);
+
+    // Add some interactivity to the search bar
+    const searchBar = document.querySelector(".glass-search-bar");
+    searchBar.addEventListener("input", function (e) {
+      // You can add search functionality here
+      console.log("Searching for:", e.target.value);
+    });
+  </script>
+</body>
+
 </html>
