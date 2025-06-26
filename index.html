@@ -546,6 +546,14 @@
       // You can add search functionality here
       console.log("Searching for:", e.target.value);
     });
+
+    // Remove focus from dropdown after selection
+    const glassDropdown = document.querySelector('.glass-dropdown');
+    if (glassDropdown) {
+      glassDropdown.addEventListener('change', function(e) {
+        e.target.blur();
+      });
+    }
   </script>
 </body>
 
