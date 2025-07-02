@@ -45,7 +45,9 @@
           <div class="tutorial-step">
             <div class="step-number">1</div>
             <div class="step-title"></div>
-            <div class="step-description">pick a song you're into right now</div>
+            <div class="step-description">
+              pick a song you're into right now
+            </div>
           </div>
           <div class="tutorial-step">
             <div class="step-number">2</div>
@@ -64,11 +66,16 @@
       <!-- Search bar -->
       <div id="searchContainer" class="search-container">
         <div class="search-helper-text">Find the tune. Flip the mood.</div>
-        <input
-          type="text"
-          class="glass-search-bar"
-          placeholder="Search for songs here..."
-        />
+        <div class="search-wrapper">
+          <input
+            type="text"
+            class="glass-search-bar"
+            placeholder="Search for songs here..."
+            id="songSearch"
+          />
+          <div class="search-results" id="searchResults"></div>
+        </div>
+        
         <div class="dropdown-and-submit">
           <select class="glass-dropdown">
             <option disabled selected>Select a mood</option>
@@ -171,13 +178,122 @@
         });
       }
 
-      // Start the animation when page loads
-      window.addEventListener("load", startAnimationSequence);
+      // Spotify search functionality
+      let searchTimeout;
+      let selectedSong = null;
 
-      // Add some interactivity to the search bar
-      const searchBar = document.querySelector(".glass-search-bar");
-      searchBar.addEventListener("input", function (e) {
-        console.log("Searching for:", e.target.value);
+      function initializeSpotifySearch() {
+        const searchBar = document.getElementById("songSearch");
+        const searchResults = document.getElementById("searchResults");
+
+        searchBar.addEventListener("input", function (e) {
+          const query = e.target.value.trim();
+
+          // Clear previous timeout
+          clearTimeout(searchTimeout);
+
+          if (query.length === 0) {
+            searchResults.innerHTML = "";
+            searchResults.style.display = "none";
+            return;
+          }
+
+          // Debounce search requests
+          searchTimeout = setTimeout(() => {
+            searchSpotify(query);
+          }, 300);
+        });
+
+        // Hide results when clicking outside
+        document.addEventListener("click", function (e) {
+          if (!e.target.closest(".search-wrapper")) {
+            searchResults.style.display = "none";
+          }
+        });
+      }
+
+      async function searchSpotify(query) {
+        const searchResults = document.getElementById("searchResults");
+
+        try {
+          const response = await fetch(
+            `/api/search?q=${encodeURIComponent(query)}`
+          );
+          const data = await response.json();
+
+          if (data.tracks && data.tracks.length > 0) {
+            displaySearchResults(data.tracks);
+          } else {
+            searchResults.innerHTML =
+              '<div class="no-results">No songs found</div>';
+            searchResults.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Search error:", error);
+          searchResults.innerHTML =
+            '<div class="error-message">Search failed. Please try again.</div>';
+          searchResults.style.display = "block";
+        }
+      }
+
+      function displaySearchResults(tracks) {
+        const searchResults = document.getElementById("searchResults");
+
+        searchResults.innerHTML = tracks
+          .map(
+            (track) => `
+          <div class="search-result-item" data-track-id="${
+            track.id
+          }" data-track-name="${track.name}" data-track-artists="${
+              track.artists
+            }">
+            <div class="track-info">
+              <div class="track-name">${track.name}</div>
+              <div class="track-artist">${track.artists}</div>
+            </div>
+            ${
+              track.image
+                ? `<img src="${track.image}" alt="Album cover" class="track-image">`
+                : ""
+            }
+          </div>
+        `
+          )
+          .join("");
+
+        searchResults.style.display = "block";
+
+        // Add click handlers to results
+        searchResults
+          .querySelectorAll(".search-result-item")
+          .forEach((item) => {
+            item.addEventListener("click", function () {
+              const trackName = this.dataset.trackName;
+              const trackArtists = this.dataset.trackArtists;
+              const trackId = this.dataset.trackId;
+
+              // Update search bar with selected song
+              document.getElementById(
+                "songSearch"
+              ).value = `${trackName} - ${trackArtists}`;
+
+              // Store selected song data
+              selectedSong = {
+                id: trackId,
+                name: trackName,
+                artists: trackArtists,
+              };
+
+              // Hide results
+              searchResults.style.display = "none";
+            });
+          });
+      }
+
+      // Start the animation when page loads
+      window.addEventListener("load", () => {
+        startAnimationSequence();
+        initializeSpotifySearch();
       });
 
       // Remove focus from dropdown after selection
