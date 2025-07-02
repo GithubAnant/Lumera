@@ -16,6 +16,135 @@ body {
   position: relative;
 }
 
+/* Search wrapper and results styling */
+/* .search-wrapper {
+  position: relative;
+  width: 100%;
+} */
+
+.search-wrapper {
+  position: relative;
+  width: 70%;
+  min-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* .search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  max-height: 300px;
+  min-width: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 0 px;
+  display: none;
+} */
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  /* left: 0; */
+  width: 100%; /* This matches the input width */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 5px;
+  display: none; /* Or toggle with JS */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-name {
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artist {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.no-results,
+.error-message {
+  padding: 16px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.error-message {
+  color: #ff6b6b;
+}
+
+/* Scrollbar styling for search results */
+.search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-results::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
 /* Realistic mountain background */
 .mountain-background {
   position: absolute;
@@ -312,7 +441,7 @@ body {
 }
 
 .glass-search-bar {
-  width: 70%;
+  width: 100%;
   min-width: 300px;
   padding: 20px 25px;
   font-size: 1.2rem;
@@ -457,7 +586,7 @@ body {
   z-index: 20;
   opacity: 1;
   transition: all 0.3s ease;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
