@@ -208,20 +208,17 @@
 //   console.log(`🚀 Server running on http://localhost:${PORT}`);
 //   console.log(`📁 Serving files from: ${__dirname}`);
 // });
-
 const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const axios = require('axios');
 const serverless = require('serverless-http');
-require('dotenv').config({ path: './apikeys.env' });
+const cors = require('cors');
+const axios = require('axios');
+require('dotenv').config();
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
+// cache and helper logic stays same...
 let spotifyAccessToken = null;
 let tokenExpiryTime = null;
 let trackMetadataCache = new Map();
@@ -234,136 +231,110 @@ async function getSpotifyAccessToken() {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-  try {
-    const response = await axios.post('https://accounts.spotify.com/api/token',
-      'grant_type=client_credentials',
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Basic ' + Buffer.from(clientId + ':' + clientSecret).toString('base64')
-        }
+  const response = await axios.post('https://accounts.spotify.com/api/token',
+    'grant_type=client_credentials',
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + Buffer.from(clientId + ':' + clientSecret).toString('base64')
       }
-    );
+    }
+  );
 
-    const data = response.data;
-    spotifyAccessToken = data.access_token;
-    tokenExpiryTime = Date.now() + (data.expires_in * 1000);
-
-    return spotifyAccessToken;
-  } catch (error) {
-    console.error('Error getting Spotify access token:', error.message);
-    throw error;
-  }
+  const data = response.data;
+  spotifyAccessToken = data.access_token;
+  tokenExpiryTime = Date.now() + (data.expires_in * 1000);
+  return spotifyAccessToken;
 }
 
 async function getTrackMood(trackId, accessToken) {
-  try {
-    const response = await axios.get(
-      `https://api.spotify.com/v1/audio-features/${trackId}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
+  const response = await axios.get(
+    `https://api.spotify.com/v1/audio-features/${trackId}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
       }
-    );
+    }
+  );
 
-    const data = response.data;
-    const audioFeatures = {
-      valence: data.valence,
-      energy: data.energy,
-      danceability: data.danceability,
-      tempo: data.tempo,
-      acousticness: data.acousticness,
-      instrumentalness: data.instrumentalness,
-      liveness: data.liveness,
-      loudness: data.loudness,
-      speechiness: data.speechiness
-    };
+  const data = response.data;
+  const audioFeatures = {
+    valence: data.valence,
+    energy: data.energy,
+    danceability: data.danceability,
+    tempo: data.tempo,
+    acousticness: data.acousticness,
+    instrumentalness: data.instrumentalness,
+    liveness: data.liveness,
+    loudness: data.loudness,
+    speechiness: data.speechiness
+  };
 
-    trackMetadataCache.set(trackId, audioFeatures);
-    return audioFeatures;
-  } catch (error) {
-    console.error(`Error fetching audio features for track ${trackId}:`, error.message);
-    return null;
-  }
+  trackMetadataCache.set(trackId, audioFeatures);
+  return audioFeatures;
 }
 
-app.get('/api/search', async (req, res) => {
-  try {
-    const { q } = req.query;
-    if (!q || q.trim().length === 0) {
-      return res.json({ tracks: [] });
-    }
+// Routes
+app.get('/search', async (req, res) => {
+  const { q } = req.query;
+  if (!q || q.trim().length === 0) return res.json({ tracks: [] });
 
-    const accessToken = await getSpotifyAccessToken();
-    const searchResponse = await axios.get(
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=10`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
+  const accessToken = await getSpotifyAccessToken();
+  const searchResponse = await axios.get(
+    `https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=10`,
+    {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
       }
-    );
+    }
+  );
 
-    const searchData = searchResponse.data;
-    const tracks = searchData.tracks.items.map(track => ({
-      id: track.id,
-      name: track.name,
-      artists: track.artists.map(artist => artist.name).join(', '),
-      album: track.album.name,
-      image: track.album.images[0]?.url || null,
-      preview_url: track.preview_url,
-      external_url: track.external_urls.spotify,
-      audioFeatures: null
-    }));
+  const searchData = searchResponse.data;
+  const tracks = searchData.tracks.items.map(track => ({
+    id: track.id,
+    name: track.name,
+    artists: track.artists.map(artist => artist.name).join(', '),
+    album: track.album.name,
+    image: track.album.images[0]?.url || null,
+    preview_url: track.preview_url,
+    external_url: track.external_urls.spotify,
+    audioFeatures: null
+  }));
 
-    const audioFeaturesResults = await Promise.all(
-      tracks.map(track => getTrackMood(track.id, accessToken))
-    );
+  const audioFeaturesResults = await Promise.all(
+    tracks.map(track => getTrackMood(track.id, accessToken))
+  );
 
-    tracks.forEach((track, index) => {
-      track.audioFeatures = audioFeaturesResults[index];
-    });
+  tracks.forEach((track, index) => {
+    track.audioFeatures = audioFeaturesResults[index];
+  });
 
-    res.json({ tracks });
-  } catch (error) {
-    console.error('Search error:', error.message);
-    res.status(500).json({ error: 'Search failed', details: error.message });
-  }
+  res.json({ tracks });
 });
 
-app.get('/api/track/:trackId/features', async (req, res) => {
-  try {
-    const { trackId } = req.params;
+app.get('/track/:trackId/features', async (req, res) => {
+  const { trackId } = req.params;
 
-    if (trackMetadataCache.has(trackId)) {
-      return res.json({ audioFeatures: trackMetadataCache.get(trackId) });
-    }
-
-    const accessToken = await getSpotifyAccessToken();
-    const audioFeatures = await getTrackMood(trackId, accessToken);
-
-    if (audioFeatures) {
-      res.json({ audioFeatures });
-    } else {
-      res.status(404).json({ error: 'Audio features not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get audio features', details: error.message });
+  if (trackMetadataCache.has(trackId)) {
+    return res.json({ audioFeatures: trackMetadataCache.get(trackId) });
   }
+
+  const accessToken = await getSpotifyAccessToken();
+  const audioFeatures = await getTrackMood(trackId, accessToken);
+  if (audioFeatures) res.json({ audioFeatures });
+  else res.status(404).json({ error: 'Not found' });
 });
 
-app.get('/api/metadata/cache', (req, res) => {
-  const cacheData = Object.fromEntries(trackMetadataCache);
+app.get('/metadata/cache', (req, res) => {
   res.json({
     totalCached: trackMetadataCache.size,
-    metadata: cacheData
+    metadata: Object.fromEntries(trackMetadataCache)
   });
 });
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK' });
 });
 
-// ⬇️ Export as a Vercel handler
+// ⬇️ This is what Vercel needs
 module.exports = serverless(app);
