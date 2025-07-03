@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: my-service
-    env: node
-    plan: free
-    buildCommand: npm install
-    startCommand: npm start
-    loadingPagePath: loading.html
