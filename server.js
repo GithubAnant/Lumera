@@ -214,3 +214,4 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📁 Serving files from: ${__dirname}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
+
