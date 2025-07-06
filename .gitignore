@@ -17,4 +17,4 @@ new.csv
 new.py
 delete_features.py
 tracks.csv
-.venv
+.venv/
