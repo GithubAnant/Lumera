@@ -103,23 +103,16 @@ class MoodMatcher:
     def setup_kaggle_credentials(self):
         """Setup Kaggle credentials from environment variables or config file"""
         # Check if environment variables are set (for production/Render)
-        if os.environ.get('KAGGLE_USERNAME') and os.environ.get('KAGGLE_KEY'):
-            print("Using Kaggle credentials from environment variables", file=sys.stderr)
-            return True
+        # if os.environ.get('KAGGLE_USERNAME') and os.environ.get('KAGGLE_KEY'):
+        #     print("Using Kaggle credentials from environment variables")
+        #     return True
         
         # Check if kaggle.json exists in project directory
         project_kaggle_path = os.path.join(os.getcwd(), 'kaggle', 'kaggle.json')
         if os.path.exists(project_kaggle_path):
             os.environ['KAGGLE_CONFIG_DIR'] = os.path.join(os.getcwd(), 'kaggle')
-            print("Using Kaggle config from project directory", file=sys.stderr)
-            return True
-        
-        # Check standard kaggle directory
-        home_kaggle_path = os.path.expanduser('~/.kaggle/kaggle.json')
-        if os.path.exists(home_kaggle_path):
-            print("Using Kaggle config from home directory", file=sys.stderr)
-            return True
-            
+            # print("aha Kaggle config from project directory")
+            return True        
         return False
 
     def download_dataset(self):
@@ -129,26 +122,20 @@ class MoodMatcher:
             if not self.setup_kaggle_credentials():
                 raise Exception("Kaggle credentials not found. Please set KAGGLE_USERNAME and KAGGLE_KEY environment variables or place kaggle.json in ~/.kaggle/ directory")
             
-            print("Downloading dataset from Kaggle...", file=sys.stderr)
-            
-            # Use a writable directory for downloads
-            download_dir = os.path.join(os.getcwd(), 'data')
-            os.makedirs(download_dir, exist_ok=True)
-            
-            # Download to specific directory
-            path = kagglehub.dataset_download("olegfostenko/almost-a-million-spotify-tracks", path=download_dir)
-            print(f"Dataset downloaded to: {path}", file=sys.stderr)
+            # print("Downloading dataset from Kaggle...")
+            path = kagglehub.dataset_download("olegfostenko/almost-a-million-spotify-tracks")
+            # print(f"Dataset downloaded to: {path}")
             
             # Find the CSV file in the downloaded path
             csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
             if csv_files:
                 csv_path = os.path.join(path, csv_files[0])
-                print(f"Found CSV file: {csv_files[0]}", file=sys.stderr)
+                # print(f"Found CSV file: {csv_files[0]}")
                 return csv_path
             else:
                 raise FileNotFoundError("No CSV file found in downloaded dataset")
         except Exception as e:
-            print(f"Error downloading dataset: {e}", file=sys.stderr)
+
             return None
     
     def load_data(self):
@@ -160,16 +147,16 @@ class MoodMatcher:
             raise FileNotFoundError(f"CSV file not found: {self.csv_path}")
         
         try:
-            print("Loading CSV data...", file=sys.stderr)
+            # print("Loading CSV data...")
             # Load the full CSV (137MB, 900k lines should be fine)
             self.df = pd.read_csv(self.csv_path, low_memory=False)
-            print(f"Loaded {len(self.df)} tracks", file=sys.stderr)
+            # print(f"Loaded {len(self.df)} tracks")
             
             # Clean the data
             self.clean_data()
             
         except Exception as e:
-            print(f"Error loading CSV: {e}", file=sys.stderr)
+            # print(f"Error loading CSV: {e}")
             raise
     
     def clean_data(self):
@@ -188,7 +175,7 @@ class MoodMatcher:
         if 'popularity' in self.df.columns:
             self.df = self.df[self.df['popularity'] > 0]
         
-        print(f"After cleaning: {len(self.df)} tracks", file=sys.stderr)
+        # print(f"After cleaning: {len(self.df)} tracks")
     
     def calculate_mood_score(self, track_features: Dict, mood_criteria: Dict) -> float:
         """Calculate how well a track matches a mood"""
@@ -223,7 +210,7 @@ class MoodMatcher:
             raise ValueError(f"Unknown mood: {mood}")
         
         mood_criteria = MOOD_FEATURES[mood]
-        print(f"Finding songs for mood: {mood}", file=sys.stderr)
+        # print(f"Finding songs for mood: {mood}")
         
         # Pre-filter the dataframe based on mood criteria for better performance
         filtered_df = self.df.copy()
@@ -241,14 +228,14 @@ class MoodMatcher:
                     ((filtered_df[feature] >= expanded_min) & (filtered_df[feature] <= expanded_max))
                 ]
         
-        print(f"Pre-filtered to {len(filtered_df)} tracks", file=sys.stderr)
+        # print(f"Pre-filtered to {len(filtered_df)} tracks")
         
         # Calculate mood scores using vectorized operations
         feature_columns = list(mood_criteria.keys())
         available_features = [f for f in feature_columns if f in filtered_df.columns]
         
         if not available_features:
-            print("No matching features found", file=sys.stderr)
+            # print("No matching features found")
             return []
         
         # Calculate scores for all tracks at once
@@ -304,7 +291,7 @@ class MoodMatcher:
             }
             results.append(track_info)
         
-        print(f"Found {len(results)} recommendations", file=sys.stderr)
+        # print(f"Found {len(results)} recommendations")
         return results
     
     def get_track_by_id(self, track_id: str) -> Dict:
@@ -335,12 +322,7 @@ class MoodMatcher:
 def main():
     """Main function to handle command line arguments"""
     if len(sys.argv) < 2:
-        error_output = {
-            'error': 'Usage: python mood_matcher.py <mood> [selected_song_id] [csv_path]',
-            'mood': None,
-            'selected_song_id': None
-        }
-        print(json.dumps(error_output, indent=2))
+        # print("Usage: python mood_matcher.py <mood> [selected_song_id] [csv_path]")
         sys.exit(1)
     
     mood = sys.argv[1]
@@ -357,11 +339,12 @@ def main():
             elif isinstance(obj, list):
                 return [clean_nan_values(item) for item in obj]
             elif isinstance(obj, float) and (np.isnan(obj) or obj != obj):  # Check for NaN
-                return None  # Changed from "None" string to None
+                return "None"  # or return "" for empty string
             else:
                 return obj
         
         cleaned_result = clean_nan_values(results)
+
 
         # Output as JSON
         output = {
@@ -370,7 +353,7 @@ def main():
             'matches': cleaned_result
         }
         
-        print(json.dumps(output, indent=2))
+        print(json.dumps(output, indent=2), file=sys.stdout)
         
     except Exception as e:
         error_output = {
@@ -378,7 +361,7 @@ def main():
             'mood': mood,
             'selected_song_id': selected_song_id
         }
-        print(json.dumps(error_output, indent=2))
+        # print(json.dumps(error_output, indent=2))
         sys.exit(1)
 
 if __name__ == "__main__":

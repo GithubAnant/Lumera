@@ -66,8 +66,87 @@ async function getSpotifyAccessToken() {
 }
 
 // Function to run Python mood matcher
-function runMoodMatcher(mood, selectedSongId = null) {
+// function runMoodMatcher(mood, selectedSongId = null) {
   
+//   return new Promise((resolve, reject) => {
+//     const pythonScript = path.join(__dirname, "mood_matcher.py");
+//     const args = [pythonScript, mood];
+    
+//     if (selectedSongId) {
+//       args.push(selectedSongId);
+//     }
+    
+//     const python = spawn("python", args);
+    
+//     let dataString = "";
+//     let errorString = "";
+    
+//     python.on("close", (code) => {
+//       console.log("=== PYTHON DEBUG INFO ===");
+//       console.log("Exit code:", code);
+//       console.log("Raw stdout:", JSON.stringify(dataString));
+//       console.log("Raw stderr:", JSON.stringify(errorString));
+//       console.log("Stdout length:", dataString.length);
+//       console.log("========================");
+  
+//       if (code !== 0) {
+//         reject(
+//           new Error(`Python script failed with code ${code}: ${errorString}`)
+//         );
+//         return;
+//       }
+  
+//       if (!dataString || dataString.trim().length === 0) {
+//         reject(new Error("Python script returned empty output"));
+//         return;
+//       }
+  
+//       try {
+//         const result = JSON.parse(dataString.trim());
+//         if (result.error) {
+//           reject(new Error(result.error));
+//         } else {
+//           resolve(result);
+//         }
+//       } catch (parseError) {
+//         reject(
+//           new Error(
+//             `Failed to parse Python output: ${parseError.message}. Raw output: ${dataString}`
+//           )
+//         );
+//       }
+//     });
+
+//     python.stdout.on("data", (data) => {
+//       dataString += data.toString();
+//     });
+
+//     python.stderr.on("data", (data) => {
+//       errorString += data.toString();
+//     });
+
+//     python.on("close", (code) => {
+//       if (code !== 0) {
+//         reject(new Error(`Python script failed: ${errorString}`));
+//         return;
+//       }
+
+//       try {
+//         const result = JSON.parse(dataString);
+//         if (result.error) {
+//           reject(new Error(result.error));
+//         } else {
+//           resolve(result);
+//         }
+//       } catch (parseError) {
+//         reject(
+//           new Error(`Failed to parse Python output: ${parseError.message}`)
+//         );
+//       }
+//     });
+//   });
+// }
+function runMoodMatcher(mood, selectedSongId = null) {
   return new Promise((resolve, reject) => {
     const pythonScript = path.join(__dirname, "mood_matcher.py");
     const args = [pythonScript, mood];
@@ -76,11 +155,28 @@ function runMoodMatcher(mood, selectedSongId = null) {
       args.push(selectedSongId);
     }
     
-    const python = spawn("python", args);
+    // Use python3 instead of python for better compatibility
+    const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
+    const python = spawn(pythonCmd, args, {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: {
+        ...process.env,
+        PYTHONUNBUFFERED: '1',  // Disable Python output buffering
+        PYTHONIOENCODING: 'utf-8'  // Ensure proper encoding
+      }
+    });
     
     let dataString = "";
     let errorString = "";
     
+    python.stdout.on("data", (data) => {
+      dataString += data.toString();
+    });
+
+    python.stderr.on("data", (data) => {
+      errorString += data.toString();
+    });
+
     python.on("close", (code) => {
       console.log("=== PYTHON DEBUG INFO ===");
       console.log("Exit code:", code);
@@ -88,19 +184,19 @@ function runMoodMatcher(mood, selectedSongId = null) {
       console.log("Raw stderr:", JSON.stringify(errorString));
       console.log("Stdout length:", dataString.length);
       console.log("========================");
-  
+
       if (code !== 0) {
         reject(
           new Error(`Python script failed with code ${code}: ${errorString}`)
         );
         return;
       }
-  
+
       if (!dataString || dataString.trim().length === 0) {
         reject(new Error("Python script returned empty output"));
         return;
       }
-  
+
       try {
         const result = JSON.parse(dataString.trim());
         if (result.error) {
@@ -117,32 +213,8 @@ function runMoodMatcher(mood, selectedSongId = null) {
       }
     });
 
-    python.stdout.on("data", (data) => {
-      dataString += data.toString();
-    });
-
-    python.stderr.on("data", (data) => {
-      errorString += data.toString();
-    });
-
-    python.on("close", (code) => {
-      if (code !== 0) {
-        reject(new Error(`Python script failed: ${errorString}`));
-        return;
-      }
-
-      try {
-        const result = JSON.parse(dataString);
-        if (result.error) {
-          reject(new Error(result.error));
-        } else {
-          resolve(result);
-        }
-      } catch (parseError) {
-        reject(
-          new Error(`Failed to parse Python output: ${parseError.message}`)
-        );
-      }
+    python.on("error", (error) => {
+      reject(new Error(`Failed to start Python process: ${error.message}`));
     });
   });
 }
