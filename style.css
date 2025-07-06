@@ -330,10 +330,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  pointer-events: none;
 }
 
 .tutorial-container.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .tutorial-headline {
@@ -420,10 +422,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  pointer-events: none;
 }
 
 .search-container.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .search-helper-text {
