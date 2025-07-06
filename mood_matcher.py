@@ -153,8 +153,25 @@ class MoodMatcher:
     
     def load_data(self):
         """Load the CSV data"""
-        if not self.csv_path:
-            self.csv_path = self.download_dataset()
+        # First check if CSV path was provided
+        if self.csv_path and os.path.exists(self.csv_path):
+            print(f"Using provided CSV file: {self.csv_path}", file=sys.stderr)
+        else:
+            # Check if we have a cached dataset
+            data_dir = os.path.join(os.getcwd(), 'data')
+            cached_csvs = []
+            if os.path.exists(data_dir):
+                for root, dirs, files in os.walk(data_dir):
+                    for file in files:
+                        if file.endswith('.csv') and os.path.getsize(os.path.join(root, file)) > 1000000:  # At least 1MB
+                            cached_csvs.append(os.path.join(root, file))
+            
+            if cached_csvs:
+                print(f"Using cached CSV file: {cached_csvs[0]}", file=sys.stderr)
+                self.csv_path = cached_csvs[0]
+            else:
+                # Try to download
+                self.csv_path = self.download_dataset()
         
         if not self.csv_path or not os.path.exists(self.csv_path):
             raise FileNotFoundError(f"CSV file not found: {self.csv_path}")
