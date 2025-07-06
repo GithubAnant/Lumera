@@ -136,7 +136,7 @@ class MoodMatcher:
             os.makedirs(download_dir, exist_ok=True)
             
             # Download to specific directory
-            path = kagglehub.dataset_download("olegfostenko/almost-a-million-spotify-tracks", path=download_dir)
+            path = kagglehub.dataset_download("anantsinghal786/almost-million-songs-dataset-2025-16-features", path=download_dir)
             print(f"Dataset downloaded to: {path}", file=sys.stderr)
             
             # Find the CSV file in the downloaded path
