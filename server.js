@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const axios = require('axios');
-require('dotenv').config();
-// require('dotenv').config({ path: './apikeys.env' });
+// require('dotenv').config();
+require('dotenv').config({ path: './apikeys.env' });
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -24,49 +24,11 @@ app.use(express.static(__dirname, {
   }
 }));
 
-// Store access token and track metadata
+// Store access token
 let spotifyAccessToken = null;
 let tokenExpiryTime = null;
-let trackMetadataCache = new Map(); // Store metadata for future use
 
-// Get track audio features (mood metadata)
-async function getTrackMood(trackId, accessToken) {
-  try {
-    const response = await axios.get(
-      `https://api.spotify.com/v1/audio-features/${trackId}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
-      }
-    );
-    
-    const data = response.data;
-    const audioFeatures = {
-      valence: data.valence,
-      energy: data.energy,
-      danceability: data.danceability,
-      tempo: data.tempo,
-      acousticness: data.acousticness,
-      instrumentalness: data.instrumentalness,
-      liveness: data.liveness,
-      loudness: data.loudness,
-      speechiness: data.speechiness
-    };
-    
-    // Store metadata in cache for future use
-    trackMetadataCache.set(trackId, audioFeatures);
-    
-    // Console log the metadata
-    console.log(`Audio features for track ${trackId}:`, audioFeatures);
-    
-    return audioFeatures;
-  } catch (error) {
-    return null;
-  }
-}
-
-// Function to get Spotify access token (this was missing the function declaration)
+// Function to get Spotify access token
 async function getSpotifyAccessToken() {
   if (spotifyAccessToken && tokenExpiryTime && Date.now() < tokenExpiryTime) {
     return spotifyAccessToken;
@@ -97,7 +59,7 @@ async function getSpotifyAccessToken() {
   }
 }
 
-// Search endpoint with audio features
+// Search endpoint
 app.get('/api/search', async (req, res) => {
   try {
     const { q } = req.query;
@@ -120,7 +82,6 @@ app.get('/api/search', async (req, res) => {
     const searchData = searchResponse.data;
     
     if (searchData.tracks && searchData.tracks.items) {
-      // Get basic track info first
       const tracks = searchData.tracks.items.map(track => ({
         id: track.id,
         name: track.name,
@@ -128,24 +89,8 @@ app.get('/api/search', async (req, res) => {
         album: track.album.name,
         image: track.album.images[0]?.url || null,
         preview_url: track.preview_url,
-        external_url: track.external_urls.spotify,
-        audioFeatures: null // Will be populated below
+        external_url: track.external_urls.spotify
       }));
-      
-      // Fetch audio features for all tracks (in parallel for better performance)
-      const audioFeaturesPromises = tracks.map(track => 
-        getTrackMood(track.id, accessToken)
-      );
-      
-      const audioFeaturesResults = await Promise.all(audioFeaturesPromises);
-      
-      // Add audio features to each track
-      tracks.forEach((track, index) => {
-        track.audioFeatures = audioFeaturesResults[index];
-      });
-      
-      // Log the total number of tracks with metadata cached
-      console.log(`Total tracks with cached metadata: ${trackMetadataCache.size}`);
       
       res.json({ tracks });
     } else {
@@ -158,42 +103,6 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// New endpoint to get audio features for a specific track
-app.get('/api/track/:trackId/features', async (req, res) => {
-  try {
-    const { trackId } = req.params;
-    
-    // Check if we have cached metadata first
-    if (trackMetadataCache.has(trackId)) {
-      console.log(`Using cached metadata for track ${trackId}`);
-      return res.json({ audioFeatures: trackMetadataCache.get(trackId) });
-    }
-    
-    const accessToken = await getSpotifyAccessToken();
-    const audioFeatures = await getTrackMood(trackId, accessToken);
-    
-    if (audioFeatures) {
-      res.json({ audioFeatures });
-    } else {
-      res.status(404).json({ error: 'Audio features not found' });
-    }
-    
-  } catch (error) {
-    console.error('Audio features error:', error.message);
-    res.status(500).json({ error: 'Failed to get audio features', details: error.message });
-  }
-});
-
-// New endpoint to get all cached metadata
-app.get('/api/metadata/cache', (req, res) => {
-  const cacheData = Object.fromEntries(trackMetadataCache);
-  console.log('Current metadata cache:', cacheData);
-  res.json({ 
-    totalCached: trackMetadataCache.size,
-    metadata: cacheData 
-  });
-});
-
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
@@ -204,14 +113,8 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// app.listen(PORT, () => {
-//   console.log(`🚀 Server running on http://localhost:${PORT}`);
-//   console.log(`📁 Serving files from: ${__dirname}`);
-// });
-
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📁 Serving files from: ${__dirname}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
-

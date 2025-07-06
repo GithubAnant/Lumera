@@ -651,130 +651,6 @@ body {
   color: white;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .fade-text {
-    font-size: 2.5rem;
-  }
-
-  .dual-text {
-    font-size: 2.5rem;
-  }
-
-  .tutorial-headline {
-    font-size: 2.5rem;
-    margin-bottom: 60px;
-  }
-
-  .tutorial-steps {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    max-width: 400px;
-  }
-
-  .step-number {
-    font-size: 2.5rem;
-  }
-
-  .step-title {
-    font-size: 1.8rem;
-  }
-
-  .step-description {
-    font-size: 1.1rem;
-    max-width: 250px;
-  }
-
-  .get-started-btn {
-    padding: 14px 40px;
-    font-size: 1.1rem;
-  }
-
-  .glass-search-bar {
-    font-size: 1rem;
-    padding: 15px 20px;
-  }
-
-  .search-helper-text {
-    font-size: 0.95rem;
-  }
-
-  .glass-dropdown {
-    font-size: 0.95rem;
-    padding: 10px 16px 10px 10px;
-    min-width: 50px;
-  }
-
-  .submit-btn {
-    font-size: 0.95rem;
-    padding: 10px 20px;
-  }
-
-  .lumera-header {
-    top: 12px;
-    left: 16px;
-  }
-
-  .lumera-title {
-    font-size: 1rem;
-  }
-
-  .lumera-logo {
-    height: 20px;
-    width: 20px;
-    margin-right: 4px;
-  }
-}
-
-@media (max-width: 480px) {
-  .fade-text {
-    font-size: 2rem;
-  }
-
-  .dual-text {
-    font-size: 1.4rem;
-    margin: 15px 0;
-  }
-
-  .tutorial-headline {
-    font-size: 2rem;
-    margin-bottom: 40px;
-  }
-
-  .step-number {
-    font-size: 2rem;
-  }
-
-  .step-title {
-    font-size: 1.5rem;
-  }
-
-  .step-description {
-    font-size: 1rem;
-    max-width: 200px;
-  }
-
-  .get-started-btn {
-    padding: 12px 32px;
-    font-size: 1rem;
-  }
-
-  .search-helper-text {
-    font-size: 0.8rem;
-  }
-
-  .glass-dropdown {
-    font-size: 0.8rem;
-    padding: 8px 10px 8px 8px;
-  }
-
-  .submit-btn {
-    font-size: 0.8rem;
-    padding: 8px 12px;
-  }
-}
-
 .ha-page {
   display: none;
   opacity: 0;
@@ -864,7 +740,7 @@ body {
   height: 300px;
   object-fit: cover;
   border-radius: 18px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
   margin-right: 48px;
 }
 
@@ -887,7 +763,7 @@ body {
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: background 0.2s;
   text-decoration: none;
   font-family: "Montserrat", sans-serif;
@@ -919,4 +795,184 @@ body {
 .reroll-btn:hover {
   background: #cfcfcf;
   color: #000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .fade-text {
+    font-size: 2.5rem;
+  }
+
+  .dual-text {
+    font-size: 2.5rem;
+  }
+
+  .tutorial-headline {
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+  }
+
+  .tutorial-steps {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    max-width: 400px;
+  }
+
+  .step-number {
+    font-size: 2.5rem;
+  }
+
+  .step-title {
+    font-size: 1.8rem;
+  }
+
+  .step-description {
+    font-size: 1.1rem;
+    max-width: 250px;
+  }
+
+  .get-started-btn {
+    padding: 14px 40px;
+    font-size: 1.1rem;
+  }
+
+  .glass-search-bar {
+    font-size: 1rem;
+    padding: 15px 20px;
+  }
+
+  .search-helper-text {
+    font-size: 0.95rem;
+  }
+
+  .glass-dropdown {
+    font-size: 0.95rem;
+    padding: 10px 16px 10px 10px;
+    min-width: 50px;
+  }
+
+  .submit-btn {
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+
+  .lumera-header {
+    top: 12px;
+    left: 16px;
+  }
+
+  .lumera-title {
+    font-size: 1rem;
+  }
+
+  .lumera-logo {
+    height: 20px;
+    width: 20px;
+    margin-right: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fade-text {
+    font-size: 2rem;
+  }
+
+  .dual-text {
+    font-size: 1.4rem;
+    margin: 15px 0;
+  }
+
+  .tutorial-headline {
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
+
+  .step-number {
+    font-size: 2rem;
+  }
+
+  .step-title {
+    font-size: 1.5rem;
+  }
+
+  .step-description {
+    font-size: 1rem;
+    max-width: 200px;
+  }
+
+  .get-started-btn {
+    padding: 12px 32px;
+    font-size: 0.8rem;
+    margin-top: 1px;
+  }
+
+  .search-helper-text {
+    font-size: 0.8rem;
+  }
+
+  .glass-dropdown {
+    font-size: 0.9rem;
+    padding: 8px 26px 8px 12px;
+  }
+
+  .submit-btn {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+
+  @media (max-width: 480px) {
+    .song-image {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 16px auto;
+    }
+
+    .song-title {
+      font-size: 1.8rem;
+      text-align: center;
+    }
+
+    .song-artist {
+      font-size: 1rem;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .spotify-btn,
+    .reroll-btn {
+      font-size: 0.95rem;
+      padding: 10px 16px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .button-container {
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .ha-back-button {
+      bottom: 24px;
+      left: 24px;
+      font-size: 0.9rem;
+    }
+    .song-info {
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+
+    .song-display {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .ha-content {
+      padding: 10px;
+    }
+  }
 }

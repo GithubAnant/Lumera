@@ -12,3 +12,7 @@ apikeys.env
 .DS_Store
 
 .vscode/
+
+new.csv
+new.py
+delete_features.py

@@ -411,8 +411,7 @@
             haContent.appendChild(songDisplay);
           } else {
             const haContent = document.getElementById("haContent");
-            haContent.innerHTML =
-              '<div style="color:white;font-size:2rem;">No song selected.</div>';
+            haContent.innerHTML = `<div style="color:white;font-size:clamp(1rem, 2.5vw, 2rem);">No song selected.</div>`;
           }
 
           searchContainer.style.transition = "opacity 0.7s";
