@@ -25,3 +25,8 @@ filtered.csv
 cleaned.csv
 
 notneeded/
+kaggle/
+kaggle/kaggle.json
+
+index2.html
+server3.js

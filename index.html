@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lumera: Find a song based on your mood</title>
+    <title>asdsa: Find a song based on your mood</title>
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
@@ -79,16 +79,18 @@
         <div class="dropdown-and-submit">
           <select class="glass-dropdown">
             <option disabled selected>Select a mood</option>
-            <option value="calm">Calm</option>
-            <option value="moody">Moody</option>
-            <option value="uplifting">Uplifting</option>
-            <option value="melancholy">Melancholy</option>
+            <option value="happy">Happy</option>
+            <option value="sad">Sad</option>
+            <option value="energetic">Energetic</option>
+            <option value="chill">Chill</option>
             <option value="romantic">Romantic</option>
-            <option value="dark">Dark</option>
-            <option value="euphoric">Euphoric</option>
+            <option value="party">Party</option>
+            <option value="focus">Focus</option>
+            <option value="angry">Angry</option>
             <option value="nostalgic">Nostalgic</option>
-            <option value="angsty">Angsty</option>
-            <option value="hopeful">Hopeful</option>
+            <option value="upbeat">Upbeat</option>
+            <option value="mellow">Mellow</option>
+            <option value="intense">Intense</option>
           </select>
 
           <button class="submit-btn">submit</button>
@@ -328,102 +330,299 @@
       const submitBtn = document.querySelector(".submit-btn");
       const searchContainer = document.getElementById("searchContainer");
       const haPage = document.getElementById("haPage");
+
+      // Add mood selection variables
+      let selectedMood = null;
+      let currentRecommendation = null;
+      let allRecommendations = [];
+      let currentRecommendationIndex = 0;
+
+      // Function to get mood selection from dropdown
+      function getSelectedMood() {
+        const moodDropdown = document.querySelector(".glass-dropdown");
+        const selectedValue = moodDropdown ? moodDropdown.value : null;
+
+        // Convert to proper case to match your server's expected format
+        if (selectedValue && selectedValue !== "Select a mood") {
+          return selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1);
+        }
+
+        return null;
+      }
+
+      // Function to get multiple recommendations from server
+      async function getRecommendations(
+        mood,
+        selectedSongId = null,
+        limit = 10
+      ) {
+        try {
+          const response = await fetch("/api/recommend", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              mood: mood,
+              selectedSongId: selectedSongId,
+              limit: limit,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to get recommendations");
+          }
+
+          return data;
+        } catch (error) {
+          console.error("Error getting recommendations:", error);
+          throw error;
+        }
+      }
+
+      // Function to display recommendation
+      function displayRecommendation(recommendation) {
+        const haContent = document.getElementById("haContent");
+        haContent.innerHTML = "";
+
+        if (!recommendation || !recommendation.spotify) {
+          haContent.innerHTML = `<div style="color:white;font-size:clamp(1rem, 2.5vw, 2rem);">No recommendation found. Try a different mood!</div>`;
+          return;
+        }
+
+        const spotifyTrack = recommendation.spotify;
+
+        // Create song display container
+        const songDisplay = document.createElement("div");
+        songDisplay.className = "song-display";
+
+        // Create song image
+        const songImage = document.createElement("img");
+        songImage.src = spotifyTrack.image || "assets/default-album.png";
+        songImage.alt = "Album cover";
+        songImage.className = "song-image";
+
+        // Create song info container
+        const songInfo = document.createElement("div");
+        songInfo.className = "song-info";
+
+        // Create song title
+        const songTitle = document.createElement("div");
+        songTitle.className = "song-title";
+        songTitle.textContent = spotifyTrack.name;
+
+        // Create song artist
+        const songArtist = document.createElement("div");
+        songArtist.className = "song-artist";
+        songArtist.textContent = spotifyTrack.artists;
+
+        // Create album info
+        const songAlbum = document.createElement("div");
+        songAlbum.style.fontSize = "0.9em";
+        songAlbum.style.opacity = "0.7";
+
+        // Create button container
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "button-container";
+
+        // Create Spotify button
+        const spotifyBtn = document.createElement("a");
+        spotifyBtn.href = spotifyTrack.external_url;
+        spotifyBtn.target = "_blank";
+        spotifyBtn.className = "spotify-btn";
+
+        // Create Spotify button content
+        const spotifyIcon = document.createElement("img");
+        spotifyIcon.src = "assets/spotify.svg";
+        spotifyIcon.alt = "Spotify";
+        spotifyIcon.width = 20;
+        spotifyIcon.height = 20;
+
+        const spotifyText = document.createElement("span");
+        spotifyText.textContent = "open on spotify";
+
+        spotifyBtn.appendChild(spotifyIcon);
+        spotifyBtn.appendChild(spotifyText);
+
+        // Create reroll button
+        const rerollBtn = document.createElement("button");
+        rerollBtn.className = "reroll-btn";
+        rerollBtn.textContent = "reroll";
+
+        // Add click handler for reroll button - updated to use batch
+        rerollBtn.addEventListener("click", async function () {
+          try {
+            // Show loading state
+            rerollBtn.textContent = "getting new song...";
+            rerollBtn.disabled = true;
+
+            // Check if we have more recommendations in the current batch
+            if (currentRecommendationIndex + 1 < allRecommendations.length) {
+              // Move to next recommendation in the batch
+              currentRecommendationIndex++;
+              currentRecommendation =
+                allRecommendations[currentRecommendationIndex];
+              displayRecommendation(currentRecommendation);
+            } else {
+              // We've exhausted the current batch, get a new batch
+              const newRecommendationsData = await getRecommendations(
+                selectedMood,
+                selectedSong?.id,
+                10
+              );
+
+              if (
+                newRecommendationsData.recommendations &&
+                newRecommendationsData.recommendations.length > 0
+              ) {
+                // Update with new batch
+                allRecommendations = newRecommendationsData.recommendations;
+                currentRecommendationIndex = 0;
+                currentRecommendation =
+                  allRecommendations[currentRecommendationIndex];
+                displayRecommendation(currentRecommendation);
+              } else {
+                throw new Error("No new recommendations found");
+              }
+            }
+          } catch (error) {
+            console.error("Reroll error:", error);
+            rerollBtn.textContent = "try again";
+            rerollBtn.disabled = false;
+            // You might want to show an error message to the user
+          }
+        });
+
+        // Create preview button (if preview URL is available)
+        if (spotifyTrack.preview_url) {
+          const previewBtn = document.createElement("button");
+          previewBtn.className = "preview-btn";
+          previewBtn.textContent = "preview";
+
+          let audio = null;
+          previewBtn.addEventListener("click", function () {
+            if (audio && !audio.paused) {
+              audio.pause();
+              previewBtn.textContent = "preview";
+            } else {
+              if (audio) {
+                audio.pause();
+              }
+              audio = new Audio(spotifyTrack.preview_url);
+              audio.play();
+              previewBtn.textContent = "stop";
+
+              audio.onended = function () {
+                previewBtn.textContent = "preview";
+              };
+            }
+          });
+
+          buttonContainer.appendChild(previewBtn);
+        }
+
+        // Append elements
+        buttonContainer.appendChild(spotifyBtn);
+        buttonContainer.appendChild(rerollBtn);
+
+        songInfo.appendChild(songTitle);
+        songInfo.appendChild(songArtist);
+        // Note: moodScore was referenced but not defined in original code
+        // songInfo.appendChild(moodScore);
+        songInfo.appendChild(buttonContainer);
+
+        songDisplay.appendChild(songImage);
+        songDisplay.appendChild(songInfo);
+
+        haContent.appendChild(songDisplay);
+      }
+
+      // Main submit button handler
       if (submitBtn && searchContainer && haPage) {
         haPage.style.display = "none";
         haPage.style.opacity = 0;
-        submitBtn.addEventListener("click", function () {
-          // Populate haPage with selectedSong info
-          if (selectedSong) {
-            const haContent = document.getElementById("haContent");
 
-            // Clear existing content
-            haContent.innerHTML = "";
+        submitBtn.addEventListener("click", async function () {
+          // Get selected mood
+          selectedMood = getSelectedMood();
 
-            // Create song display container
-            const songDisplay = document.createElement("div");
-            songDisplay.className = "song-display";
-
-            // Create song image
-            const songImage = document.createElement("img");
-            songImage.src = selectedSong.image;
-            songImage.alt = "Album cover";
-            songImage.className = "song-image";
-
-            // Create song info container
-            const songInfo = document.createElement("div");
-            songInfo.className = "song-info";
-
-            // Create song title
-            const songTitle = document.createElement("div");
-            songTitle.className = "song-title";
-            songTitle.textContent = selectedSong.name;
-
-            // Create song artist
-            const songArtist = document.createElement("div");
-            songArtist.className = "song-artist";
-            songArtist.textContent = selectedSong.artists;
-
-            // Create button container
-            const buttonContainer = document.createElement("div");
-            buttonContainer.className = "button-container";
-
-            // Create Spotify button
-            const spotifyBtn = document.createElement("a");
-            spotifyBtn.href = selectedSong.spotifyUrl;
-            spotifyBtn.target = "_blank";
-            spotifyBtn.className = "spotify-btn";
-
-            // Create Spotify button content
-            const spotifyIcon = document.createElement("img");
-            spotifyIcon.src = "assets/spotify.svg";
-            spotifyIcon.alt = "Spotify";
-            spotifyIcon.width = 20;
-            spotifyIcon.height = 20;
-
-            const spotifyText = document.createElement("span");
-            spotifyText.textContent = "open on spotify";
-
-            spotifyBtn.appendChild(spotifyIcon);
-            spotifyBtn.appendChild(spotifyText);
-
-            // Create reroll button
-            const rerollBtn = document.createElement("button");
-            rerollBtn.className = "reroll-btn";
-            rerollBtn.textContent = "reroll";
-
-            // Add click handler for reroll button
-            rerollBtn.addEventListener("click", function () {
-              // You can add reroll functionality here
-              console.log("Reroll clicked");
-            });
-
-            // Append elements
-            buttonContainer.appendChild(spotifyBtn);
-            buttonContainer.appendChild(rerollBtn);
-
-            songInfo.appendChild(songTitle);
-            songInfo.appendChild(songArtist);
-            songInfo.appendChild(buttonContainer);
-
-            songDisplay.appendChild(songImage);
-            songDisplay.appendChild(songInfo);
-
-            haContent.appendChild(songDisplay);
-          } else {
-            const haContent = document.getElementById("haContent");
-            haContent.innerHTML = `<div style="color:white;font-size:clamp(1rem, 2.5vw, 2rem);">No song selected.</div>`;
+          if (!selectedMood) {
+            alert("Please select a mood first!");
+            return;
           }
 
-          searchContainer.style.transition = "opacity 0.7s";
-          searchContainer.style.opacity = 0;
-          setTimeout(() => {
-            searchContainer.style.display = "none";
-            haPage.style.display = "flex";
-            setTimeout(() => {
-              haPage.style.opacity = 1;
-            }, 50);
-          }, 700);
+          try {
+            // Show loading state
+            submitBtn.textContent = "finding your song...";
+            submitBtn.disabled = true;
+
+            // Get multiple recommendations from server
+            const recommendationsData = await getRecommendations(
+              selectedMood,
+              selectedSong?.id,
+              10
+            );
+
+            if (
+              recommendationsData.recommendations &&
+              recommendationsData.recommendations.length > 0
+            ) {
+              allRecommendations = recommendationsData.recommendations;
+              currentRecommendationIndex = 0;
+              currentRecommendation =
+                allRecommendations[currentRecommendationIndex];
+              displayRecommendation(currentRecommendation);
+
+              // Transition to results page
+              searchContainer.style.transition = "opacity 0.7s";
+              searchContainer.style.opacity = 0;
+
+              setTimeout(() => {
+                searchContainer.style.display = "none";
+                haPage.style.display = "flex";
+                setTimeout(() => {
+                  haPage.style.opacity = 1;
+                }, 50);
+              }, 700);
+            } else {
+              throw new Error("No recommendations found");
+            }
+          } catch (error) {
+            console.error("Submit error:", error);
+            alert("Failed to get recommendations. Please try again!");
+          } finally {
+            // Reset button state
+            submitBtn.textContent = "submit";
+            submitBtn.disabled = false;
+          }
         });
+      }
+
+      // Add dropdown change handler
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add event listener to dropdown
+        const moodDropdown = document.querySelector(".glass-dropdown");
+        if (moodDropdown) {
+          moodDropdown.addEventListener("change", function () {
+            selectedMood = getSelectedMood();
+          });
+        }
+      });
+
+      // Helper function to go back to search (you can add a back button)
+      function goBackToSearch() {
+        haPage.style.transition = "opacity 0.7s";
+        haPage.style.opacity = 0;
+
+        setTimeout(() => {
+          haPage.style.display = "none";
+          searchContainer.style.display = "block";
+          setTimeout(() => {
+            searchContainer.style.opacity = 1;
+          }, 50);
+        }, 700);
       }
 
       // Add back button functionality
