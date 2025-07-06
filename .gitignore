@@ -10,3 +10,5 @@ apikeys.env
 
 # Runtime files
 .DS_Store
+
+.vscode/
