@@ -196,7 +196,7 @@ function displaySearchResults(tracks) {
 
 // Start the animation when page loads
 window.addEventListener("load", () => {
-  startAnimationSequence();
+//   startAnimationSequence();
   initializeSpotifySearch();
 });
 
