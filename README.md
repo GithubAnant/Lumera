@@ -68,28 +68,11 @@
 
 ---
 
-## 🤖 Features
-
-| Feature            | Description                                      |
-|--------------------|--------------------------------------------------|
-| 🔍 Search Playlists| Find mood-matched playlists via Spotify API       |
-| 🎧 Mood Picker     | Pick “Happy,” “Chill,” “Party,” etc. and enjoy   |
-| 📊 Stats Dashboard | See your listening trends in a sleek chart        |
-
----
-
-## 💡 Tips & Tricks
-
-> 💡 _Pro tip: If you play "Happy" by Pharrell Williams, your productivity increases by 42%. (Source: Trust me, bro.)_
-
----
-
 ## ❤️ Contribute
 
-- Open an [issue](https://github.com/<your-username>/<your-repo>/issues) if you spot a bug or have a feature idea
-- Submit a pull request (bonus points for witty commit messages)
-- Join the conversation on [Discord](#) (we have virtual cookies)
-- Tag me on [Twitter](#) if you made something cool
+- Open an [issue](https://github.com/GithubAnant/Lumera/issues) if you spot a bug or have a feature idea
+- Tag me on [Twitter](https://twitter.com/anantsinghal807) [@anantsinghal807] if you made something cool
+- Ping me on Discord: **anant.who** (I reply faster than localhost)
 
 
 ---
@@ -97,7 +80,7 @@
 <details>
 <summary>🎁 <b>Bonus: Why "Lumera"?</b></summary>
 
-Because "Spotify Mood Thingy" was already taken. Plus, "Lumera" sounds like a wizard who only casts good vibes.
+Because "Spotify Mood Thingy" was already taken. Plus, "Lumera" sounds cool. 
 
 </details>
 
