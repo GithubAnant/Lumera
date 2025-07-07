@@ -45,12 +45,12 @@ function startAnimationSequence() {
       dualTextContainer.classList.add("visible");
       firstDualText.classList.add("visible");
     }
-  }, 4000);
+  }, 4500);
 
   // Phase 3: Show second dual text below the first
   setTimeout(() => {
     if (!isSkipped) secondDualText.classList.add("visible");
-  }, 6500);
+  }, 7000);
 
   // Phase 4: Hide both dual texts and show tutorial
   setTimeout(() => {
@@ -59,7 +59,7 @@ function startAnimationSequence() {
       secondDualText.classList.remove("visible");
       dualTextContainer.classList.remove("visible");
     }
-  }, 8500);
+  }, 9000);
 
   setTimeout(() => {
     if (!isSkipped) {
@@ -600,7 +600,7 @@ class ClientMoodMatcher {
 const clientMoodMatcher = new ClientMoodMatcher();
 
 // ===== UPDATED getRecommendations FUNCTION =====
-async function getRecommendations(mood, selectedSongId = null, limit = 10) {
+async function getRecommendations(mood, selectedSongId = null, limit = 35) {
   try {
     console.log(`Getting client-side recommendations for mood: ${mood}`);
 
@@ -701,6 +701,8 @@ function displayRecommendation(recommendation) {
   const songArtist = document.createElement("div");
   songArtist.className = "song-artist";
   songArtist.textContent = spotifyTrack.artists;
+    songTitle.textContent = name.length > 20 ? name.slice(0, 17) + "..." : name;
+
 
   // Create button container
   const buttonContainer = document.createElement("div");
@@ -748,7 +750,7 @@ function displayRecommendation(recommendation) {
         const newRecommendationsData = await getRecommendations(
           selectedMood,
           selectedSong?.id,
-          10
+          30
         );
 
         if (
@@ -831,8 +833,8 @@ window.addEventListener("load", async () => {
     loadingElement.innerHTML = `
       <div style="
         position: fixed;
-        top: 50%;
-        left: 50%;
+        bottom: 10%;
+        right: 100%;
         transform: translate(-50%, -50%);
         background: rgba(0,0,0,0.8);
         color: white;
@@ -842,7 +844,7 @@ window.addEventListener("load", async () => {
         text-align: center;
       ">
         <div>Loading music database...</div>
-        <div style="margin-top: 10px; font-size: 0.9em; opacity: 0.7;">This may take a moment</div>
+        <div style="margin-top: 10px; font-size: 0.9em; opacity: 0.7;">Proceed after this is done :)</div>
       </div>
     `;
     document.body.appendChild(loadingElement);
@@ -935,7 +937,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const recommendationsData = await getRecommendations(
           selectedMood,
           selectedSong?.id,
-          10
+          30
         );
 
         if (
