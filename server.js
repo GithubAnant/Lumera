@@ -2,9 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const axios = require("axios");
-const { spawn } = require("child_process");
-require('dotenv').config();
-// require("dotenv").config({ path: "./apikeys.env" });
+// require('dotenv').config();
+require("dotenv").config({ path: "./apikeys.env" });
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -22,6 +21,9 @@ app.use(
       }
       if (path.endsWith(".js")) {
         res.setHeader("Content-Type", "application/javascript");
+      }
+      if (path.endsWith(".csv")) {
+        res.setHeader("Content-Type", "text/csv");
       }
     },
   })
@@ -63,160 +65,6 @@ async function getSpotifyAccessToken() {
     console.error("Error getting Spotify access token:", error.message);
     throw error;
   }
-}
-
-// Function to run Python mood matcher
-// function runMoodMatcher(mood, selectedSongId = null) {
-  
-//   return new Promise((resolve, reject) => {
-//     const pythonScript = path.join(__dirname, "mood_matcher.py");
-//     const args = [pythonScript, mood];
-    
-//     if (selectedSongId) {
-//       args.push(selectedSongId);
-//     }
-    
-//     const python = spawn("python", args);
-    
-//     let dataString = "";
-//     let errorString = "";
-    
-//     python.on("close", (code) => {
-//       console.log("=== PYTHON DEBUG INFO ===");
-//       console.log("Exit code:", code);
-//       console.log("Raw stdout:", JSON.stringify(dataString));
-//       console.log("Raw stderr:", JSON.stringify(errorString));
-//       console.log("Stdout length:", dataString.length);
-//       console.log("========================");
-  
-//       if (code !== 0) {
-//         reject(
-//           new Error(`Python script failed with code ${code}: ${errorString}`)
-//         );
-//         return;
-//       }
-  
-//       if (!dataString || dataString.trim().length === 0) {
-//         reject(new Error("Python script returned empty output"));
-//         return;
-//       }
-  
-//       try {
-//         const result = JSON.parse(dataString.trim());
-//         if (result.error) {
-//           reject(new Error(result.error));
-//         } else {
-//           resolve(result);
-//         }
-//       } catch (parseError) {
-//         reject(
-//           new Error(
-//             `Failed to parse Python output: ${parseError.message}. Raw output: ${dataString}`
-//           )
-//         );
-//       }
-//     });
-
-//     python.stdout.on("data", (data) => {
-//       dataString += data.toString();
-//     });
-
-//     python.stderr.on("data", (data) => {
-//       errorString += data.toString();
-//     });
-
-//     python.on("close", (code) => {
-//       if (code !== 0) {
-//         reject(new Error(`Python script failed: ${errorString}`));
-//         return;
-//       }
-
-//       try {
-//         const result = JSON.parse(dataString);
-//         if (result.error) {
-//           reject(new Error(result.error));
-//         } else {
-//           resolve(result);
-//         }
-//       } catch (parseError) {
-//         reject(
-//           new Error(`Failed to parse Python output: ${parseError.message}`)
-//         );
-//       }
-//     });
-//   });
-// }
-function runMoodMatcher(mood, selectedSongId = null) {
-  return new Promise((resolve, reject) => {
-    const pythonScript = path.join(__dirname, "mood_matcher.py");
-    const args = [pythonScript, mood];
-    
-    if (selectedSongId) {
-      args.push(selectedSongId);
-    }
-    
-    // Use python3 instead of python for better compatibility
-    const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
-    const python = spawn(pythonCmd, args, {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: {
-        ...process.env,
-        PYTHONUNBUFFERED: '1',  // Disable Python output buffering
-        PYTHONIOENCODING: 'utf-8'  // Ensure proper encoding
-      }
-    });
-    
-    let dataString = "";
-    let errorString = "";
-    
-    python.stdout.on("data", (data) => {
-      dataString += data.toString();
-    });
-
-    python.stderr.on("data", (data) => {
-      errorString += data.toString();
-    });
-
-    python.on("close", (code) => {
-      console.log("=== PYTHON DEBUG INFO ===");
-      console.log("Exit code:", code);
-      console.log("Raw stdout:", JSON.stringify(dataString));
-      console.log("Raw stderr:", JSON.stringify(errorString));
-      console.log("Stdout length:", dataString.length);
-      console.log("========================");
-
-      if (code !== 0) {
-        reject(
-          new Error(`Python script failed with code ${code}: ${errorString}`)
-        );
-        return;
-      }
-
-      if (!dataString || dataString.trim().length === 0) {
-        reject(new Error("Python script returned empty output"));
-        return;
-      }
-
-      try {
-        const result = JSON.parse(dataString.trim());
-        if (result.error) {
-          reject(new Error(result.error));
-        } else {
-          resolve(result);
-        }
-      } catch (parseError) {
-        reject(
-          new Error(
-            `Failed to parse Python output: ${parseError.message}. Raw output: ${dataString}`
-          )
-        );
-      }
-    });
-
-    python.on("error", (error) => {
-      reject(new Error(`Failed to start Python process: ${error.message}`));
-    });
-  });
 }
 
 // Function to get track details from Spotify
@@ -307,153 +155,21 @@ app.get("/api/search", async (req, res) => {
   }
 });
 
-// Mood-based recommendation endpoint
-app.post("/api/recommend", async (req, res) => {
+// Get Spotify track details endpoint (for client-side processing)
+app.post("/api/spotify-details", async (req, res) => {
   try {
-    const { mood, selectedSongId, limit = 5 } = req.body;
+    const { trackIds } = req.body;
 
-    if (!mood) {
-      return res.status(400).json({ error: "Mood is required" });
+    if (!trackIds || !Array.isArray(trackIds) || trackIds.length === 0) {
+      return res.status(400).json({ error: "trackIds array is required" });
     }
 
-    const validMoods = [
-      "Happy",
-      "Sad",
-      "Energetic",
-      "Chill",
-      "Romantic",
-      "Party",
-      "Focus",
-      "Angry",
-      "Nostalgic",
-      "Upbeat",
-      "Mellow",
-      "Intense",
-    ];
-    if (!validMoods.includes(mood)) {
-      return res.status(400).json({ error: "Invalid mood", validMoods });
-    }
-
-    console.log(
-      `Getting recommendations for mood: ${mood}, selectedSong: ${selectedSongId}`
-    );
-
-    // Run Python mood matcher
-    const moodResults = await runMoodMatcher(mood, selectedSongId);
-
-    if (!moodResults.matches || moodResults.matches.length === 0) {
-      return res.json({
-        mood,
-        selectedSongId,
-        recommendations: [],
-        message: "No matching tracks found for this mood",
-      });
-    }
-
-    // Get track IDs for Spotify API
-    const trackIds = moodResults.matches
-      .slice(0, limit)
-      .map((match) => match.track_id);
-
-    // Get detailed track information from Spotify
     const spotifyTracks = await getSpotifyTrackDetails(trackIds);
-
-    // Combine mood matching data with Spotify data
-    const recommendations = moodResults.matches.slice(0, limit).map((match) => {
-      const spotifyTrack = spotifyTracks.find(
-        (track) => track.id === match.track_id
-      );
-
-      return {
-        ...match,
-        spotify: spotifyTrack || null,
-        // Include mood score and features for debugging
-        mood_score: match.mood_score,
-        features: match.features,
-      };
-    });
-
-    res.json({
-      mood,
-      selectedSongId,
-      recommendations,
-      total_found: moodResults.matches.length,
-    });
+    res.json({ tracks: spotifyTracks });
   } catch (error) {
-    console.error("Recommendation error:", error.message);
+    console.error("Spotify details error:", error.message);
     res.status(500).json({
-      error: "Failed to get recommendations",
-      details: error.message,
-    });
-  }
-});
-
-// Single recommendation endpoint (returns just one song)
-app.post("/api/recommend-single", async (req, res) => {
-  try {
-    const { mood, selectedSongId } = req.body;
-
-    if (!mood) {
-      return res.status(400).json({ error: "Mood is required" });
-    }
-
-    const validMoods = [
-      "Happy",
-      "Sad",
-      "Energetic",
-      "Chill",
-      "Romantic",
-      "Party",
-      "Focus",
-      "Angry",
-      "Nostalgic",
-      "Upbeat",
-      "Mellow",
-      "Intense",
-    ];
-    if (!validMoods.includes(mood)) {
-      return res.status(400).json({ error: "Invalid mood", validMoods });
-    }
-
-    console.log(
-      `Getting single recommendation for mood: ${mood}, selectedSong: ${selectedSongId}`
-    );
-
-    // Run Python mood matcher
-    const moodResults = await runMoodMatcher(mood, selectedSongId);
-
-    if (!moodResults.matches || moodResults.matches.length === 0) {
-      return res.json({
-        mood,
-        selectedSongId,
-        recommendation: null,
-        message: "No matching tracks found for this mood",
-      });
-    }
-
-    // Get the best match
-    const bestMatch = moodResults.matches[0];
-
-    // Get detailed track information from Spotify
-    const spotifyTracks = await getSpotifyTrackDetails([bestMatch.track_id]);
-    const spotifyTrack = spotifyTracks[0] || null;
-
-    const recommendation = {
-      ...bestMatch,
-      spotify: spotifyTrack,
-      mood_score: bestMatch.mood_score,
-      features: bestMatch.features,
-    };
-
-    res.json({
-      mood,
-      selectedSongId,
-      recommendation,
-    });
-  } catch (error) {
-    console.error("Single recommendation error:", error.message);
-    res.status(500).json({
-      error: "Failed to get recommendation",
+      error: "Failed to get Spotify track details",
       details: error.message,
     });
   }
@@ -467,6 +183,11 @@ app.get("/api/health", (req, res) => {
 // Serve the main HTML file
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Serve tracks.csv file
+app.get("/tracks.csv", (req, res) => {
+  res.sendFile(path.join(__dirname, "tracks.csv"));
 });
 
 app.listen(PORT, "0.0.0.0", () => {
