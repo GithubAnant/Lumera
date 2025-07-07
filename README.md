@@ -11,7 +11,7 @@
 
 ---
 
-> _"Because your playlist should match your mood, not your neighbor's lawnmower."_
+> _"Because your song should match your mood, not because spotify said so."_
 
 ---
 
