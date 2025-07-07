@@ -700,9 +700,7 @@ function displayRecommendation(recommendation) {
   // Create song artist
   const songArtist = document.createElement("div");
   songArtist.className = "song-artist";
-  songArtist.textContent = spotifyTrack.artists;
-    songTitle.textContent = name.length > 20 ? name.slice(0, 17) + "..." : name;
-
+  songArtist.textContent = spotifyTrack.artists > 22 ? spotifyTrack.artists.slice(0,18) +'...' : spotifyTrack.artists;
 
   // Create button container
   const buttonContainer = document.createElement("div");
