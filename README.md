@@ -25,6 +25,8 @@
    ```
 3. **Set up your Spotify API keys**
 
+   Get your keys from [Spotify Dev Dashboard](https://developer.spotify.com/).
+
    Create a file named `apikeys.env`
 
    Inside, add:
