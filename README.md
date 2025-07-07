@@ -35,13 +35,17 @@
    SPOTIFY_CLIENT_SECRET=your_client_secret_here
    ```
 
-4. **Fire up the server**
+4. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
+5. **Fire up the server**
    ```bash
    node server.js
    ```
 
-5. **Open your browser to [http://localhost:10000](http://localhost:10000) and it's live! .** 🌟
+6. **Open your browser to [http://localhost:10000](http://localhost:10000) and it's live! .** 🌟
 
 ---
 
@@ -62,7 +66,7 @@
 | (and more!)         |           | See `package.json` for the full list     |
 
 <details>
-<summary>⚙️ <b>Advanced Config</b> (click to expand if you like living on the edge)</summary>
+<summary>⚙️ <b>Advanced (Optional)</b> (click to expand if you like living on the edge)</summary>
 
 You can add these optional env vars to `apikeys.env`:
 
