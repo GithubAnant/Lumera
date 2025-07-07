@@ -17,7 +17,7 @@
 
 ## 🚀 Getting Started
 
-1. **Follow me & star this repo :)** ⭐️  
+1. **Follow me & star this repo :)** 
 2. **Clone the project**  
    ```bash
    git clone https://github.com/GithubAnant/Lumera.git
