@@ -6,7 +6,6 @@
 
 <p align="center">
   <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-18.x-green?logo=node.js" alt="Node.js Version"></a>
-  <a href="#"><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status"></a>
   <a href="#"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
 </p>
 
