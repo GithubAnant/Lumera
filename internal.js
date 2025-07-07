@@ -196,7 +196,7 @@ function displaySearchResults(tracks) {
 
 // Start the animation when page loads
 window.addEventListener("load", () => {
-//   startAnimationSequence();
+  startAnimationSequence();
   initializeSpotifySearch();
 });
 
@@ -856,9 +856,9 @@ window.addEventListener("load", async () => {
     console.log("Tracks data loaded successfully");
 
     // Start your existing animation sequence
-    if (typeof startAnimationSequence === "function") {
-      startAnimationSequence();
-    }
+    // if (typeof startAnimationSequence === "function") {
+    //   startAnimationSequence();
+    // }
     if (typeof initializeSpotifySearch === "function") {
       initializeSpotifySearch();
     }
