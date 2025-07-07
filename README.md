@@ -32,6 +32,7 @@
    ```ini
    SPOTIFY_CLIENT_ID=your_client_id_here
    SPOTIFY_CLIENT_SECRET=your_client_secret_here
+   PORT=10000 
    ```
 
 4. **Install dependencies**
@@ -44,7 +45,7 @@
    node server.js
    ```
 
-6. **Open your browser to [http://localhost:10000](http://localhost:10000) and it's live! .** 🌟
+6. **Open your browser to [http://localhost:10000](http://localhost:10000) and it's live!** 🌟
 
 ---
 
