@@ -16,7 +16,7 @@ apikeys.env
 new.csv
 new.py
 delete_features.py
-tracks.csv
+
 .venv/
 delete2.py
 another.csv

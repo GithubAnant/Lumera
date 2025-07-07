@@ -4,7 +4,6 @@ import sys
 import json
 import os
 from typing import List, Dict, Any
-import kagglehub
 
 # Mood to audio features mapping
 MOOD_FEATURES = {
@@ -95,88 +94,18 @@ MOOD_FEATURES = {
 }
 
 class MoodMatcher:
-    def __init__(self, csv_path: str = None):
+    def __init__(self, csv_path: str = "tracks.csv"):
         self.csv_path = csv_path
         self.df = None
         self.load_data()
     
-    def setup_kaggle_credentials(self):
-        """Setup Kaggle credentials from environment variables or config file"""
-        # Check if environment variables are set (for production/Render)
-        if os.environ.get('KAGGLE_USERNAME') and os.environ.get('KAGGLE_KEY'):
-            print("Using Kaggle credentials from environment variables", file=sys.stderr)
-            return True
-        
-        # Check if kaggle.json exists in project directory
-        project_kaggle_path = os.path.join(os.getcwd(), 'kaggle', 'kaggle.json')
-        if os.path.exists(project_kaggle_path):
-            os.environ['KAGGLE_CONFIG_DIR'] = os.path.join(os.getcwd(), 'kaggle')
-            print("Using Kaggle config from project directory", file=sys.stderr)
-            return True
-        
-        # Check standard kaggle directory
-        home_kaggle_path = os.path.expanduser('~/.kaggle/kaggle.json')
-        if os.path.exists(home_kaggle_path):
-            print("Using Kaggle config from home directory", file=sys.stderr)
-            return True
-            
-        return False
-
-    def download_dataset(self):
-        """Download the dataset using Kaggle API"""
-        try:
-            # Setup credentials
-            if not self.setup_kaggle_credentials():
-                raise Exception("Kaggle credentials not found. Please set KAGGLE_USERNAME and KAGGLE_KEY environment variables or place kaggle.json in ~/.kaggle/ directory")
-            
-            print("Downloading dataset from Kaggle...", file=sys.stderr)
-            
-            # Use a writable directory for downloads
-
-            # Download to specific directory
-            path = kagglehub.dataset_download_files("anantsinghal786/almost-million-songs-dataset-2025-16-features")
-            print(f"Dataset downloaded to: {path}", file=sys.stderr)
-            
-            # Find the CSV file in the downloaded path
-            csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
-            if csv_files:
-                csv_path = os.path.join(path, csv_files[0])
-                print(f"Found CSV file: {csv_files[0]}", file=sys.stderr)
-                return csv_path
-            else:
-                raise FileNotFoundError("No CSV file found in downloaded dataset")
-        except Exception as e:
-            print(f"Error downloading dataset: {e}", file=sys.stderr)
-            return None
-    
     def load_data(self):
         """Load the CSV data"""
-        # First check if CSV path was provided
-        if self.csv_path and os.path.exists(self.csv_path):
-            print(f"Using provided CSV file: {self.csv_path}", file=sys.stderr)
-        else:
-            # Check if we have a cached dataset
-            data_dir = os.path.join(os.getcwd(), 'data')
-            cached_csvs = []
-            if os.path.exists(data_dir):
-                for root, dirs, files in os.walk(data_dir):
-                    for file in files:
-                        if file.endswith('.csv') and os.path.getsize(os.path.join(root, file)) > 1000000:  # At least 1MB
-                            cached_csvs.append(os.path.join(root, file))
-            
-            if cached_csvs:
-                print(f"Using cached CSV file: {cached_csvs[0]}", file=sys.stderr)
-                self.csv_path = cached_csvs[0]
-            else:
-                # Try to download
-                self.csv_path = self.download_dataset()
-        
-        if not self.csv_path or not os.path.exists(self.csv_path):
+        if not os.path.exists(self.csv_path):
             raise FileNotFoundError(f"CSV file not found: {self.csv_path}")
         
         try:
-            print("Loading CSV data...", file=sys.stderr)
-            # Load the full CSV (137MB, 900k lines should be fine)
+            print(f"Loading CSV data from: {self.csv_path}", file=sys.stderr)
             self.df = pd.read_csv(self.csv_path, low_memory=False)
             print(f"Loaded {len(self.df)} tracks", file=sys.stderr)
             
@@ -360,7 +289,7 @@ def main():
     
     mood = sys.argv[1]
     selected_song_id = sys.argv[2] if len(sys.argv) > 2 else None
-    csv_path = sys.argv[3] if len(sys.argv) > 3 else None
+    csv_path = sys.argv[3] if len(sys.argv) > 3 else "tracks.csv"
     
     try:
         matcher = MoodMatcher(csv_path)
