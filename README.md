@@ -65,16 +65,6 @@
 | node-fetch          | ^2.6.7    | Makes HTTP requests to Spotify           |
 | (and more!)         |           | See `package.json` for the full list     |
 
-<details>
-<summary>⚙️ <b>Advanced (Optional)</b> (click to expand if you like living on the edge)</summary>
-
-You can add these optional env vars to `apikeys.env`:
-
-```ini
-PORT=10000           # Change the port if 10000 is too mainstreamz
-```
-
-</details>
 
 ---
 
