@@ -1,7 +1,7 @@
 # Lumera - Mood Tune 🎶
 
 <p align="center">
-  <img src="assets/lumera.png" alt="Lumera Logo" width="120"/>
+  <img src="assets/favicon.png" alt="Lumera Logo" width="120"/>
 </p>
 
 <p align="center">
