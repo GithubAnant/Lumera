@@ -33,7 +33,7 @@ function startAnimationSequence() {
   // Phase 1: Show "LUMERA"
   setTimeout(() => {
     if (!isSkipped) firstText.classList.add("visible");
-  }, 500);
+  }, 100);
 
   // Phase 2: Hide first text and show dual text container
   setTimeout(() => {
