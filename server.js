@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const axios = require("axios");
-// require('dotenv').config();
+require('dotenv').config();
 require("dotenv").config({ path: "./apikeys.env" });
 
 const app = express();
