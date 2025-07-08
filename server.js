@@ -15,6 +15,7 @@ app.use(express.json());
 app.get("/health", (req, res) => {
   res.send("OK");
 });
+
 // Serve static files with proper MIME types
 app.use(
   express.static(__dirname, {
