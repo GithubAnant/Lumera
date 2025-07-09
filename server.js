@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const axios = require("axios");
-require('dotenv').config();
+require("dotenv").config();
 // require("dotenv").config({ path: "./apikeys.env" });
 
 const app = express();
@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 10000;
 app.use(cors());
 app.use(express.json());
 
+app.get("/health", (req, res) => {
+  res.send("OK");
+});
 // Serve static files with proper MIME types
 app.use(
   express.static(__dirname, {
